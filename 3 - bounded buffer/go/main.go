@@ -5,7 +5,7 @@ import "fmt"
 import "time"
 
 var done = make(chan bool)
-var msg = make(chan int)
+var msg = make(chan int,5)
 
 func producer(){
 

@@ -11,13 +11,14 @@ func producer(){
 
     for i := 0; i < 10; i++ {
         time.Sleep(100 * time.Millisecond)
+        // fmt.Println("Pushing")   || Debug
         fmt.Printf("[producer]: pushing %d\n", i)
         // Push real value to buffer
         msg <- i
+        // fmt.Println("Pushed")    || Debug
       }
         close(msg)
         done <- true
-
 }
 
 func consumer(){
@@ -35,9 +36,10 @@ func consumer(){
 func main(){
 
     // TODO: make a bounded buffer
-    var bb = make([]int, 5);
+
     go consumer()
     go producer()
     <-done
+    fmt.Println("Done")
     //select {}
 }

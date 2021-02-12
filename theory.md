@@ -15,14 +15,14 @@ Exercise 2 - Theory questions
 > Semaphore is a variable that is non-negative and shared between threads.
   Binary semaphore only have the value 0 or 1, which are used for implementing locks by signalling for acheving mutual           exclusion.
   Mutex provides that only one thread can enter into critical section at a time.
-  
-### What are the differences between channels (in Communicating Sequential Processes, or as used by Go, Rust), mailboxes (in the Actor model, or as used by Erlang, D, Akka), and queues (as used by Python)? 
-> Channels Are a model for interprocess communication and synchronization via message passing.
-  +++
-  Queue is a linear data structure that stores items in FIFO manner,
+
+### What are the differences between channels (in Communicating Sequential Processes, or as used by Go, Rust), mailboxes (in the Actor model, or as used by Erlang, D, Akka), and queues (as used by Python)?
+> Channels are a model for interprocess communication and synchronization. The messages will be sent over a channel, and then a another thread is able to receive that message.
+Queues provides a FIFO implementation for mutli-treaded programming. Queue is used for passing messages or data safely.
 ### List some advantages of using message passing over lock-based synchronization primitives.
 > Message passing algorithms tend to be simpler.
-  Share data netweem threads or processes. 
- 
+  Avoids problems as deadlock, but can problems may appears anyway.
+
+
 ### List some advantages of using lock-based synchronization primitives over message passing.
-> *Your answer here*
+> It is faster than message passing.

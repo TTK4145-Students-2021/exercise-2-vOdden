@@ -14,8 +14,7 @@ struct BoundedBuffer {
     sem_t               empty;
     sem_t               full;
 
-
-};
+} *bb;
 
 struct BoundedBuffer* buf_new(int size){
     struct BoundedBuffer* buf = malloc(sizeof(struct BoundedBuffer));
@@ -23,7 +22,7 @@ struct BoundedBuffer* buf_new(int size){
 
     pthread_mutex_init(&buf->mtx, NULL);
     // initialize semaphores
-    sem_init(&buf->full,  0, 0); /*starting value?*/
+    sem_init(&buf->full,  0, 5);
 	  sem_init(&buf->empty, 0, 0); /*starting value?*/
 
     return buf;
@@ -41,22 +40,29 @@ void buf_destroy(struct BoundedBuffer* buf){
 
 
 void buf_push(struct BoundedBuffer* buf, int val){
-    // TODO: wait for there to be room in the buffer
-    // Creating two counting semaphores <full> and <empty> to keep track
-    
 
-    // TODO: make sure there is no concurrent access to the buffer internals
+    // Wait for there to be room in the buffer
+    sem_wait(&buf->empty); // Decrementing semaphore, blocked when sem = 0.
+    pthread_mutex_lock(&buf->mtx);
 
+    // make sure there is no concurrent access to the buffer internals
     rb_push(buf->buf, val);
 
+    pthread_mutex_unlock(&buf-mtx);
+    sem_post(&buf->empty) // Incrementing semaphore
 
     // TODO: signal that there are new elements in the buffer
 }
 
 int buf_pop(struct BoundedBuffer* buf){
-    // TODO: same, but different?
+
+    sem_wait(&buf-empty); // Decrementing semaphore, blocked when sem = 0.
+    pthread_mutex_lock(&buf->mtx);
 
     int val = rb_pop(buf->buf);
+
+    pthread_mutex_lock(&buf->mtx);
+    sem_post(&buf->full); // Incrementing semaphore.
 
     return val;
 }

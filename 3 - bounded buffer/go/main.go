@@ -5,37 +5,41 @@ import "fmt"
 import "time"
 
 var done = make(chan bool)
-var msg = make(chan int,5)
 
-func producer(){
 
-    for i := 0; i < 10; i++ {
-        time.Sleep(100 * time.Millisecond)
-        fmt.Printf("[producer]: pushing %d\n", i)
-        // Push real value to buffer
-        msg <- i
-      }
-        close(msg)
+func producer(msg chan<- int){
+
+  for i := 0; i < 10; i++ {
+      time.Sleep(100 * time.Millisecond)
+      fmt.Printf("[producer]: pushing %d\n", i)
+      // TODO: push real value to buffer
+  msg <- i
+  }
+
         done <- true
 }
 
-func consumer(){
+func consumer(msg <-chan int){
 
-    time.Sleep(1 * time.Second)
-    for msg := range msg {
-        fmt.Printf("[consumer]: %d\n", msg)
-        time.Sleep(50 * time.Millisecond)
-    }
+  time.Sleep(1 * time.Second)
+  for {
+      // Get real value from buffer
+      fmt.Printf("[consumer]: %d\n", <-msg)
+      time.Sleep(50 * time.Millisecond)
+  }
 
 }
 
 func main(){
 
-    // TODO: make a bounded buffer
+    done := make(chan bool) // Signals when done.
 
-    go consumer()
-    go producer()
+    // Bounded buffer
+    buffer := make(chan int, 5)
+
+    go consumer(buffer)
+    go producer(buffer)
     <-done
     fmt.Println("Done")
-    //select {}
+    select {}
 }
